@@ -1,7 +1,6 @@
-import requests
-import os
-import json
 from datetime import datetime
+import os
+import requests
 
 URL_USER = 'https://json.medrating.org/users'
 URL_TASK = 'https://json.medrating.org/todos'
@@ -23,6 +22,7 @@ def get_users(url):
         return users
     except Exception as e:
         print(e)
+        exit(100)
 
 
 def get_tasks(url):
@@ -31,6 +31,7 @@ def get_tasks(url):
         return tasks
     except Exception as e:
         print(e)
+        exit(100)
 
 
 def pruning_length(lst: list, length=50):
