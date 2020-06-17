@@ -76,7 +76,7 @@ def rename_file(name):
 
     file_date = file_date.split('> ')[1].strip()
     file_date = datetime.strptime(file_date, "%d.%m.%Y %H:%M")
-    new_name = f'{name[:-4]}_{str(file_date)[:-3].replace(" ", "T").replace(":", "_")}.txt'
+    new_name = f'{name[:-4]}_{str(file_date)[:-3].replace(" ", "T").replace(":", ":")}.txt'
     if os.path.exists(os.path.join(DIR_NAME, new_name)):
         os.remove(os.path.join(DIR_NAME, new_name))
     os.rename(os.path.join(DIR_NAME, name), os.path.join(DIR_NAME, new_name))
