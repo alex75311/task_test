@@ -67,8 +67,11 @@ def get_user_task(user_id: int, tasks: list):
 
 
 def create_file(name, content):
-    with open(os.path.join(DIR_NAME, name), 'w', encoding='utf-8') as f:
-        f.write(content)
+    try:
+        with open(os.path.join(DIR_NAME, name), 'w', encoding='utf-8') as f:
+            f.write(content)
+    except IOError:
+        os.remove(os.path.join(DIR_NAME, name))
 
 
 def rename_file(name):
