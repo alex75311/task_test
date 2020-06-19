@@ -67,23 +67,30 @@ def get_user_task(user_id: int, tasks: list):
 
 
 def create_file(name, content):
+    flag = False
+    if os.path.exists(os.path.join(DIR_NAME, name)):
+        new_name = get_new_name(name)
+        if os.path.exists(os.path.join(DIR_NAME, new_name)):
+            os.remove(os.path.join(DIR_NAME, new_name))
+        os.rename(os.path.join(DIR_NAME, name), os.path.join(DIR_NAME, new_name))
+        flag = True
     try:
         with open(os.path.join(DIR_NAME, name), 'w', encoding='utf-8') as f:
             f.write(content)
     except IOError:
         os.remove(os.path.join(DIR_NAME, name))
+        if flag:
+            os.rename(os.path.join(DIR_NAME, new_name), os.path.join(DIR_NAME, name))
 
 
-def rename_file(name):
+def get_new_name(name):
     with open(os.path.join(DIR_NAME, name), 'r', encoding='utf-8') as f:
         file_date = f.readline()
 
     file_date = file_date.split('> ')[1].strip()
     file_date = datetime.strptime(file_date, "%d.%m.%Y %H:%M")
-    new_name = f'{name[:-4]}_{str(file_date)[:-3].replace(" ", "T").replace(":", ":")}.txt'
-    if os.path.exists(os.path.join(DIR_NAME, new_name)):
-        os.remove(os.path.join(DIR_NAME, new_name))
-    os.rename(os.path.join(DIR_NAME, name), os.path.join(DIR_NAME, new_name))
+    new_name = f'{name[:-4]}_{str(file_date)[:-3].replace(" ", "T").replace(":", "_")}.txt'
+    return new_name
 
 
 if __name__ == '__main__':
@@ -110,6 +117,4 @@ if __name__ == '__main__':
 Оставшиеся задачи:
 {uncompleted_tasks}'''
             file_name = f'{user["username"]}.txt'
-            if os.path.exists(os.path.join(DIR_NAME, file_name)):
-                rename_file(file_name)
             create_file(file_name, result_file)
