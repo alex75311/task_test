@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+from shutil import copyfile
 import requests
 
 URL_USER = 'https://json.medrating.org/users'
@@ -66,31 +67,15 @@ def get_user_task(user_id: int, tasks: list):
     return complete_tasks, uncompleted_tasks
 
 
-def create_file(name, content):
-    flag = False
-    if os.path.exists(os.path.join(DIR_NAME, name)):
-        new_name = get_new_name(name)
-        if os.path.exists(os.path.join(DIR_NAME, new_name)):
-            os.remove(os.path.join(DIR_NAME, new_name))
-        os.rename(os.path.join(DIR_NAME, name), os.path.join(DIR_NAME, new_name))
-        flag = True
+def create_file(name, back_name, content):
     try:
-        with open(os.path.join(DIR_NAME, name), 'w', encoding='utf-8') as f:
+        with open(os.path.join(DIR_NAME, back_name), 'w', encoding='utf-8') as f:
             f.write(content)
-    except IOError:
-        os.remove(os.path.join(DIR_NAME, name))
-        if flag:
-            os.rename(os.path.join(DIR_NAME, new_name), os.path.join(DIR_NAME, name))
-
-
-def get_new_name(name):
-    with open(os.path.join(DIR_NAME, name), 'r', encoding='utf-8') as f:
-        file_date = f.readline()
-
-    file_date = file_date.split('> ')[1].strip()
-    file_date = datetime.strptime(file_date, "%d.%m.%Y %H:%M")
-    new_name = f'{name[:-4]}_{str(file_date)[:-3].replace(" ", "T").replace(":", "_")}.txt'
-    return new_name
+    except IOError as e:
+        print(e)
+        os.remove(os.path.join(DIR_NAME, back_name))
+    else:
+        copyfile(os.path.join(DIR_NAME, back_name), os.path.join(DIR_NAME, name))
 
 
 if __name__ == '__main__':
@@ -117,4 +102,5 @@ if __name__ == '__main__':
 Оставшиеся задачи:
 {uncompleted_tasks}'''
             file_name = f'{user["username"]}.txt'
-            create_file(file_name, result_file)
+            file_back_name = f'{file_name[:-4]}_{str(date).replace(".", "-").replace(" ", "T").replace(":", "_")}.txt'
+            create_file(file_name, file_back_name, result_file)
