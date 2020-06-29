@@ -9,11 +9,7 @@ DIR_NAME = 'tasks'
 
 
 def create_dir(name):
-    if os.path.exists(name):
-        if not os.path.isdir(name):
-            os.remove(name)
-            os.mkdir(name)
-    else:
+    if not os.path.exists(name):
         os.mkdir(name)
 
 
